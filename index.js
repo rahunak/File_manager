@@ -1,13 +1,12 @@
 import process from 'node:process';
-import { fileURLToPath } from 'url';
-import path from 'path';
 import readlinePromises from 'node:readline/promises';
 import os from 'os';
-import fs from 'fs';
 import { currentPathMessage } from './helpers.js';
-import changeDirectory from './navigation.js';
-import listFolder from './list.js';
-import readFile from './readFile.js';
+import changeDirectory from './nav-and-work/navigation.js';
+import listFolder from './nav-and-work/list.js';
+import readFile from './basic-operations/readFile.js';
+import createFile from './basic-operations/createFile.js';
+import renameFile from './basic-operations/renameFile.js';
 
 const readline = readlinePromises.createInterface({
   input: process.stdin,
@@ -51,7 +50,7 @@ async function commandHandler(inputData) {
 
   switch (command.trim()) {
     case 'up':
-      console.log('go up to directory');
+
       changeDirectory();
       break;
     case 'cd':
@@ -69,10 +68,10 @@ async function commandHandler(inputData) {
       readFile(...args);
       break;
     case 'add':
-      console.log('add  ');
+      createFile(...args);
       break;
     case 'rn':
-      console.log('rename  y');
+      renameFile(args[0], args[1]);
       break;
     case 'cp':
       console.log('cp  y');

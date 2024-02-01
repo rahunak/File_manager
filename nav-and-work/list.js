@@ -1,6 +1,6 @@
 import { readdir } from 'node:fs/promises';
 import { stat } from 'node:fs';
-import { formattedOuptut } from './helpers.js';
+import { formattedOuptut } from '../helpers.js';
 
 async function listFolder() {
   // read current directory
@@ -13,9 +13,9 @@ async function listFolder() {
     return acc;
   }, 0);
     // Print head of table
-  console.log(`|${'_'.repeat(maxLength + 24)}`);
+  console.log(` ${'_'.repeat(maxLength + 21)}`);
   console.log(`|${`${formattedOuptut(7, '(index)')}|${formattedOuptut(maxLength, 'Name')}`}|${formattedOuptut(6, 'Type')}|`);
-  console.log(`|${'—'.repeat(maxLength + 24)}`);
+  console.log(`|${'—'.repeat(maxLength + 21)}|`);
   // Prepare the body of table.
   const arrLists = [];
   files.forEach((file) => {
@@ -46,6 +46,6 @@ async function listFolder() {
     console.log(`|${formattedOuptut(7, index + 1)}${val.value.str}`);
   });
   // Print bottom of table.
-  console.log(`${'‾'.repeat(maxLength + 24)}`);
+  console.log(` ${'‾'.repeat(maxLength + 21)}`);
 }
 export default listFolder;
