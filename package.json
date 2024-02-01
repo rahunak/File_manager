@@ -1,0 +1,27 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "File Manager using Node.js APIs",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "File Manager",
+    "nodejs",
+    "node-js",
+    "javascript",
+    "rsschool"
+  ],
+  "author": "rahunak <66bratz@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^7.32.0 || ^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.2"
+  }
+}
