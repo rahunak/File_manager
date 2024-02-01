@@ -14,7 +14,6 @@ const readline = readlinePromises.createInterface({
 });
 let username = 'username';
 
-
 function sayGoodbye() {
   if (username === 'username') {
     username = 'anonimous';
@@ -22,7 +21,6 @@ function sayGoodbye() {
   console.log('\x1b[33m%s\x1b[0m', `\nThank you for using File Manager, ${username}, goodbye!`);
   process.exit();
 }
-
 
 function checkInputArgs() {
   const argsFromCLI = process.argv.slice(2);
@@ -105,7 +103,13 @@ async function commandHandler(inputData) {
 
 const init = () => {
   // go to home directory
-  process.chdir(os.homedir());
+
+  try {
+    process.chdir(os.homedir());
+  }
+  catch (err) {
+    console.error('Operation failed');
+  }
   readline.on('SIGINT', () => sayGoodbye());
   checkInputArgs();
   readline.on('line', (command) => {

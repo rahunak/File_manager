@@ -1,12 +1,25 @@
 import path from 'path';
+import os from 'os';
 
 function changeDirectory(destination) {
-  console.log('change directory', destination);
   if (destination === undefined) {
-    process.chdir(path.resolve(process.cwd(), '..'));
+    try {
+      if (process.cwd() === os.homedir()) {
+        return;
+      }
+      process.chdir(path.resolve(process.cwd(), '..'));
+    }
+    catch (err) {
+      console.error('Operation failed');
+    }
   }
   else {
-    process.chdir(path.resolve(process.cwd(), destination));
+    try {
+      process.chdir(path.resolve(process.cwd(), destination));
+    }
+    catch (err) {
+      console.error('Operation failed');
+    }
   }
 }
 export default changeDirectory;
