@@ -14,7 +14,6 @@ const readline = readlinePromises.createInterface({
 let username = 'username';
 
 function currentPathMessage() {
-  // const dirname = path.dirname(fileURLToPath(import.meta.url));
   console.log('You are currently in:', process.cwd());
 }
 function sayGoodbye() {
@@ -25,14 +24,14 @@ function sayGoodbye() {
   process.exit();
 }
 function formattedOuptut(maxLengthOfWord, word) {
-  const paddingLeft = Math.floor(((maxLengthOfWord + 2) - word.length) / 2);
-  const paddingRight = Math.ceil(((maxLengthOfWord + 2) - word.length) / 2);
-  return `|${' '.repeat(paddingLeft)}${word}${' '.repeat(paddingRight)}`;
+  const paddingLeft = Math.floor(((maxLengthOfWord + 2) - word.toString().length) / 2);
+  const paddingRight = Math.ceil(((maxLengthOfWord + 2) - word.toString().length) / 2);
+  return `${' '.repeat(paddingLeft)}${word}${' '.repeat(paddingRight)}`;
   // console.log('\x1b[32m%s\x1b[0m', `|${' '.repeat(padding)}${word}${' '.repeat(padding)}|`);
 }
 async function listFolder() {
+  // read current directory
   const files = await readdir(process.cwd());
-  console.log('files', files);
   // find max length of word in folder.
   const maxLength = files.reduce((acc, curr) => {
     if (acc < curr.length) {
@@ -41,12 +40,12 @@ async function listFolder() {
     return acc;
   }, 0);
   // print head of table
-  console.log('_'.repeat(maxLength + 24));
-  console.log(`${formattedOuptut(7, '(index)') + formattedOuptut(maxLength, 'Name')} ${formattedOuptut(6, 'Type')}|`);
-  console.log('—'.repeat(maxLength + 24));
+  console.log(`|${'_'.repeat(maxLength + 24)}`);
+  console.log(`|${`${formattedOuptut(7, '(index)')}|${formattedOuptut(maxLength, 'Name')}`}|${formattedOuptut(6, 'Type')}|`);
+  console.log(`|${'—'.repeat(maxLength + 24)}`);
   // prepare the body of table
   const arrLists = [];
-  files.forEach((file, index) => {
+  files.forEach((file) => {
     const newPromise = new Promise((resolve) => {
       stat(file, (err, stats) => {
         if (err) {
@@ -54,18 +53,35 @@ async function listFolder() {
           return;
         }
         const dirOrFile = stats.isDirectory() ? formattedOuptut(6, 'Folder') : formattedOuptut(6, 'File');
-        resolve(`|${(index + 1).toString().padStart(8, ' ')} ${formattedOuptut(maxLength, file)} ${dirOrFile}|`);
+        resolve({ type: stats.isDirectory() ? 'Folder' : 'File', fileName: file, str: `|${formattedOuptut(maxLength, file)}|${dirOrFile}|` });
       });
     });
     arrLists.push(newPromise);
   });
-  const result = await Promise.allSettled(arrLists).then((data) => data);
+  const result = await Promise.allSettled(arrLists).then((data) => data.sort((a, b) => {
+    // Compare folder and file types
+    if (a.value.type !== b.value.type) {
+      return a.value.type === 'Folder' ? -1 : 1;
+    }
+    // Compare file names
+    return a.value.fileName.toLowerCase().localeCompare(b.value.fileName.toLowerCase());
+  }));
+  // prepare body: sorting
   // pring body of table
-  result.forEach((val) => {
-    console.log(val.value);
+  result.forEach((val, index) => {
+    console.log(`|${formattedOuptut(7, index + 1)}${val.value.str}`);
   });
   // print bottom of table
   console.log(`${'‾'.repeat(maxLength + 24)}`);
+}
+function changeDirectory(destination) {
+  console.log('change directory', destination);
+  if (destination === undefined) {
+    process.chdir(path.resolve(process.cwd(), '..'));
+  }
+  else {
+    process.chdir(path.resolve(process.cwd(), destination));
+  }
 }
 function checkInputArgs() {
   const argsFromCLI = process.argv.slice(2);
@@ -73,7 +89,7 @@ function checkInputArgs() {
   argsFromCLI.forEach((val) => {
     if (val.startsWith('--username=')) {
       username = val.replace('--username=', '');
-      console.log('\x1b[32m%s\x1b[0m', `Welcome to the File Manager,${username}`);
+      console.log('\x1b[32m%s\x1b[0m', `Welcome to the File Manager, ${username}`);
       currentPathMessage();
     }
   });
@@ -82,24 +98,33 @@ function checkInputArgs() {
   }
 }
 
-function commandHandler(inputData) {
+async function commandHandler(inputData) {
   // prepare command
   const commandArgs = inputData.trim().split(' ');
   const [, ...args] = commandArgs;
   const command = commandArgs[0];
-  console.log('\n inputData', inputData);
-  console.log('\n args', args);
-  console.log('\n command', command);
+
+  // dont forget to remove extra console.log
+  // console.log('\n inputData', inputData);
+  // console.log('\n args', args);
+  // console.log('\n command', command);
+
   switch (command.trim()) {
     case 'up':
       console.log('go up to directory');
+      changeDirectory();
       break;
     case 'cd':
-      console.log('go down to directory');
+      if (args[0] === undefined) {
+        console.log('Invalid input');
+        break;
+      }
+      changeDirectory(args[0]);
       break;
     case 'ls':
       console.log('list all files in current directory');
-      listFolder();
+      await listFolder();
+      currentPathMessage();
       break;
     case 'cat':
       console.log('cat  y');
@@ -138,6 +163,7 @@ function commandHandler(inputData) {
 }
 
 const init = () => {
+  // go to home directory
   process.chdir(os.homedir());
   readline.on('SIGINT', () => sayGoodbye());
   checkInputArgs();
