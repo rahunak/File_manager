@@ -7,6 +7,7 @@ import fs from 'fs';
 import { currentPathMessage } from './helpers.js';
 import changeDirectory from './navigation.js';
 import listFolder from './list.js';
+import readFile from './readFile.js';
 
 const readline = readlinePromises.createInterface({
   input: process.stdin,
@@ -45,7 +46,7 @@ async function commandHandler(inputData) {
 
   // dont forget to remove extra console.log
   // console.log('\n inputData', inputData);
-  // console.log('\n args', args);
+  console.log('\n args', args);
   // console.log('\n command', command);
 
   switch (command.trim()) {
@@ -61,12 +62,11 @@ async function commandHandler(inputData) {
       changeDirectory(args[0]);
       break;
     case 'ls':
-      console.log('list all files in current directory');
       await listFolder();
       currentPathMessage();
       break;
     case 'cat':
-      console.log('cat  y');
+      readFile(...args);
       break;
     case 'add':
       console.log('add  ');
@@ -118,4 +118,9 @@ const init = () => {
   });
 };
 
-init();
+try {
+  init();
+}
+catch (err) {
+  console.error('Operation failed');
+}
