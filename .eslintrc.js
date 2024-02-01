@@ -10,5 +10,7 @@ module.exports = {
   },
   rules: {
     'no-console': 'off',
+    'brace-style': ['error', 'stroustrup', { allowSingleLine: true }],
+    'no-restricted-syntax': 'off',
   },
 };
