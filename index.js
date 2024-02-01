@@ -4,8 +4,9 @@ import path from 'path';
 import readlinePromises from 'node:readline/promises';
 import os from 'os';
 import fs from 'fs';
-import { stat } from 'node:fs';
-import { readdir } from 'node:fs/promises';
+import { currentPathMessage } from './helpers.js';
+import changeDirectory from './navigation.js';
+import listFolder from './list.js';
 
 const readline = readlinePromises.createInterface({
   input: process.stdin,
@@ -13,9 +14,7 @@ const readline = readlinePromises.createInterface({
 });
 let username = 'username';
 
-function currentPathMessage() {
-  console.log('You are currently in:', process.cwd());
-}
+
 function sayGoodbye() {
   if (username === 'username') {
     username = 'anonimous';
@@ -23,66 +22,8 @@ function sayGoodbye() {
   console.log('\x1b[33m%s\x1b[0m', `\nThank you for using File Manager, ${username}, goodbye!`);
   process.exit();
 }
-function formattedOuptut(maxLengthOfWord, word) {
-  const paddingLeft = Math.floor(((maxLengthOfWord + 2) - word.toString().length) / 2);
-  const paddingRight = Math.ceil(((maxLengthOfWord + 2) - word.toString().length) / 2);
-  return `${' '.repeat(paddingLeft)}${word}${' '.repeat(paddingRight)}`;
-  // console.log('\x1b[32m%s\x1b[0m', `|${' '.repeat(padding)}${word}${' '.repeat(padding)}|`);
-}
-async function listFolder() {
-  // read current directory
-  const files = await readdir(process.cwd());
-  // find max length of word in folder.
-  const maxLength = files.reduce((acc, curr) => {
-    if (acc < curr.length) {
-      return curr.length;
-    }
-    return acc;
-  }, 0);
-  // print head of table
-  console.log(`|${'_'.repeat(maxLength + 24)}`);
-  console.log(`|${`${formattedOuptut(7, '(index)')}|${formattedOuptut(maxLength, 'Name')}`}|${formattedOuptut(6, 'Type')}|`);
-  console.log(`|${'—'.repeat(maxLength + 24)}`);
-  // prepare the body of table
-  const arrLists = [];
-  files.forEach((file) => {
-    const newPromise = new Promise((resolve) => {
-      stat(file, (err, stats) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        const dirOrFile = stats.isDirectory() ? formattedOuptut(6, 'Folder') : formattedOuptut(6, 'File');
-        resolve({ type: stats.isDirectory() ? 'Folder' : 'File', fileName: file, str: `|${formattedOuptut(maxLength, file)}|${dirOrFile}|` });
-      });
-    });
-    arrLists.push(newPromise);
-  });
-  const result = await Promise.allSettled(arrLists).then((data) => data.sort((a, b) => {
-    // Compare folder and file types
-    if (a.value.type !== b.value.type) {
-      return a.value.type === 'Folder' ? -1 : 1;
-    }
-    // Compare file names
-    return a.value.fileName.toLowerCase().localeCompare(b.value.fileName.toLowerCase());
-  }));
-  // prepare body: sorting
-  // pring body of table
-  result.forEach((val, index) => {
-    console.log(`|${formattedOuptut(7, index + 1)}${val.value.str}`);
-  });
-  // print bottom of table
-  console.log(`${'‾'.repeat(maxLength + 24)}`);
-}
-function changeDirectory(destination) {
-  console.log('change directory', destination);
-  if (destination === undefined) {
-    process.chdir(path.resolve(process.cwd(), '..'));
-  }
-  else {
-    process.chdir(path.resolve(process.cwd(), destination));
-  }
-}
+
+
 function checkInputArgs() {
   const argsFromCLI = process.argv.slice(2);
 
@@ -99,7 +40,7 @@ function checkInputArgs() {
 }
 
 async function commandHandler(inputData) {
-  // prepare command
+  // Prepare command.
   const commandArgs = inputData.trim().split(' ');
   const [, ...args] = commandArgs;
   const command = commandArgs[0];
