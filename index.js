@@ -1,12 +1,14 @@
+import os from 'os';
 import process from 'node:process';
 import readlinePromises from 'node:readline/promises';
-import os from 'os';
+import { release, version } from "os";
 import { currentPathMessage } from './helpers.js';
 import changeDirectory from './nav-and-work/navigation.js';
 import listFolder from './nav-and-work/list.js';
 import readFile from './basic-operations/readFile.js';
 import createFile from './basic-operations/createFile.js';
 import renameFile from './basic-operations/renameFile.js';
+import copyFile from './basic-operations/copyFile.js';
 
 const readline = readlinePromises.createInterface({
   input: process.stdin,
@@ -74,7 +76,7 @@ async function commandHandler(inputData) {
       renameFile(args[0], args[1]);
       break;
     case 'cp':
-      console.log('cp  y');
+      copyFile(args[0], args[1]);
       break;
     case 'mv':
       console.log('move ');
@@ -102,7 +104,6 @@ async function commandHandler(inputData) {
 
 const init = () => {
   // go to home directory
-
   try {
     process.chdir(os.homedir());
   }
