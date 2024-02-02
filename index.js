@@ -2,14 +2,15 @@ import os from 'os';
 import process from 'node:process';
 import readlinePromises from 'node:readline/promises';
 import { currentPathMessage } from './helpers.js';
-import changeDirectory from './nav-and-work/navigation.js';
-import listFolder from './nav-and-work/list.js';
-import readFile from './basic-operations/readFile.js';
-import createFile from './basic-operations/createFile.js';
-import renameFile from './basic-operations/renameFile.js';
-import copyFile from './basic-operations/copyFile.js';
-import moveFile from './basic-operations/moveFile.js';
-import removeFile from './basic-operations/removeFile.js';
+import changeDirectory from './nav_and_work/navigation.js';
+import listFolder from './nav_and_work/list.js';
+import readFile from './basic_operations/readFile.js';
+import createFile from './basic_operations/createFile.js';
+import renameFile from './basic_operations/renameFile.js';
+import copyFile from './basic_operations/copyFile.js';
+import moveFile from './basic_operations/moveFile.js';
+import removeFile from './basic_operations/removeFile.js';
+import getOSInfo from './operating_system_info/index_getOSInfo.js';
 
 const readline = readlinePromises.createInterface({
   input: process.stdin,
@@ -48,7 +49,7 @@ async function commandHandler(inputData) {
 
   // dont forget to remove extra console.log
   // console.log('\n inputData', inputData);
-  console.log('\n args', args);
+  // console.log('\n args', args);
   // console.log('\n command', command);
 
   switch (command.trim()) {
@@ -85,7 +86,7 @@ async function commandHandler(inputData) {
       removeFile(args[0]);
       break;
     case 'os':
-      console.log('os - arguments?');
+      getOSInfo(args[0]);
       break;
     case 'hash':
       console.log('hash');
@@ -116,7 +117,9 @@ const init = () => {
   readline.on('SIGINT', () => sayGoodbye());
   checkInputArgs();
   readline.on('line', (command) => {
-    commandHandler(command);
+    if (command !== '') {
+      commandHandler(command);
+    }
     currentPathMessage();
   });
 };
