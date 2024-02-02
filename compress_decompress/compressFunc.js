@@ -1,7 +1,6 @@
-import zlib, { createGzip, createBrotliCompress } from 'node:zlib';
-import fs, { createReadStream, createWriteStream } from 'node:fs';
-import { pipeline } from 'node:stream';
-import { promisify } from 'node:util';
+import zlib, { createBrotliCompress } from 'node:zlib';
+import { createReadStream, createWriteStream, stat } from 'node:fs';
+import { pipeline } from 'node:stream/promises';
 import path from 'path';
 
 async function compressFunc(pathToFile, pathToDestination) {
@@ -10,29 +9,29 @@ async function compressFunc(pathToFile, pathToDestination) {
     return;
   }
   async function brotliCompress(input, output) {
-    const pipe = promisify(pipeline);
-    const gzip = createBrotliCompress({
+    let expectedInputSize = 0;
+    await stat(pathToFile, (err, stats) => {
+      expectedInputSize = stats.size;
+    });
+    // params uses for optimization
+    const brotliStream = await createBrotliCompress({
       chunkSize: 32 * 1024,
       params: {
-        [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_MODE_TEXT,
-        [zlib.constants.BROTLI_PARAM_QUALITY]: 4,
-        [zlib.constants.BROTLI_PARAM_SIZE_HINT]: fs.statSync(pathToFile).size,
+        [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_MODE_GENERIC,
+        [zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY,
+        [zlib.constants.BROTLI_PARAM_SIZE_HINT]: expectedInputSize,
       },
     });
 
-    const source = createReadStream(input);
-    const destination = createWriteStream(output);
-    await pipe(source, gzip, destination);
+    const source = await createReadStream(input);
+    const destination = await createWriteStream(output);
+    await pipeline(source, brotliStream, destination);
   }
 
   try {
     // Use .br extension for Brotli compression
     const fileName = path.basename(pathToFile);
-    await brotliCompress(pathToFile, path.join(pathToDestination, `${fileName}.br`))
-      .catch((err) => {
-        console.error('An error occurred:', err);
-        process.exitCode = 1;
-      });
+    await brotliCompress(pathToFile, path.join(pathToDestination, `${fileName}.br`));
   }
   catch (error) {
     console.error('Operation failed');
