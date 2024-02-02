@@ -11,8 +11,13 @@ async function moveFile(pathToFile, pathToNewDirectory) {
   try {
     let pathToCopyFile = null;
     // Read more about this condition https://nodejs.org/api/path.html#windows-vs-posix
+    // and here https://nodejs.org/api/path.html#pathbasenamepath-suffix
     if (process.platform === 'win32') {
-      pathToCopyFile = path.join(pathToNewDirectory, path.win32.basename(pathToFile));
+      pathToCopyFile = path.join(
+        pathToNewDirectory,
+        path.win32.basename(pathToFile),
+        path.extname(pathToFile),
+      );
     }
     else {
       pathToCopyFile = path.join(pathToNewDirectory, path.posix.basename(pathToFile));

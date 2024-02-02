@@ -19,6 +19,7 @@ async function listFolder() {
   // Prepare the body of table.
   const arrLists = [];
   files.forEach((file) => {
+    // can be rewritten with util.promisify(original)
     const newPromise = new Promise((resolve) => {
       stat(file, (err, stats) => {
         if (err) {
