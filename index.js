@@ -1,6 +1,7 @@
 import os from 'os';
 import process from 'node:process';
 import readlinePromises from 'node:readline/promises';
+import hashFunc from './hash/hashFunc.js';
 import { currentPathMessage } from './helpers.js';
 import changeDirectory from './nav_and_work/navigation.js';
 import listFolder from './nav_and_work/list.js';
@@ -11,6 +12,8 @@ import copyFile from './basic_operations/copyFile.js';
 import moveFile from './basic_operations/moveFile.js';
 import removeFile from './basic_operations/removeFile.js';
 import getOSInfo from './operating_system_info/index_getOSInfo.js';
+import compressFunc from './compress_decompress/compressFunc.js';
+import decompressFunc from './compress_decompress/decompressFunc.js';
 
 const readline = readlinePromises.createInterface({
   input: process.stdin,
@@ -89,13 +92,13 @@ async function commandHandler(inputData) {
       getOSInfo(args[0]);
       break;
     case 'hash':
-      console.log('hash');
+      hashFunc(args[0]);
       break;
     case 'compress':
-      console.log('compress');
+      compressFunc(args[0], args[1]);
       break;
     case 'decompress':
-      console.log('decompress');
+      decompressFunc(args[0], args[1]);
       break;
     case '.exit':
       sayGoodbye();
