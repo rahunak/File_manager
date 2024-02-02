@@ -1,7 +1,6 @@
 import os from 'os';
 import process from 'node:process';
 import readlinePromises from 'node:readline/promises';
-import { release, version } from "os";
 import { currentPathMessage } from './helpers.js';
 import changeDirectory from './nav-and-work/navigation.js';
 import listFolder from './nav-and-work/list.js';
@@ -9,6 +8,8 @@ import readFile from './basic-operations/readFile.js';
 import createFile from './basic-operations/createFile.js';
 import renameFile from './basic-operations/renameFile.js';
 import copyFile from './basic-operations/copyFile.js';
+import moveFile from './basic-operations/moveFile.js';
+import removeFile from './basic-operations/removeFile.js';
 
 const readline = readlinePromises.createInterface({
   input: process.stdin,
@@ -52,7 +53,6 @@ async function commandHandler(inputData) {
 
   switch (command.trim()) {
     case 'up':
-
       changeDirectory();
       break;
     case 'cd':
@@ -67,10 +67,10 @@ async function commandHandler(inputData) {
       currentPathMessage();
       break;
     case 'cat':
-      readFile(...args);
+      readFile(args[0]);
       break;
     case 'add':
-      createFile(...args);
+      createFile(args[0]);
       break;
     case 'rn':
       renameFile(args[0], args[1]);
@@ -79,7 +79,10 @@ async function commandHandler(inputData) {
       copyFile(args[0], args[1]);
       break;
     case 'mv':
-      console.log('move ');
+      moveFile(args[0], args[1]);
+      break;
+    case 'rm':
+      removeFile(args[0]);
       break;
     case 'os':
       console.log('os - arguments?');
