@@ -14,7 +14,7 @@ async function listFolder() {
   }, 0);
     // Print head of table
   console.log(` ${'_'.repeat(maxLength + 21)}`);
-  console.log(`|${`${formattedOuptut(7, '(index)')}|${formattedOuptut(maxLength, 'Name')}`}|${formattedOuptut(6, 'Type')}|`);
+  console.log(`\x1b[7m|${`${formattedOuptut(7, '(index)')}|${formattedOuptut(maxLength, 'Name')}`}|${formattedOuptut(6, 'Type')}|\x1b[0m`);
   console.log(`|${'—'.repeat(maxLength + 21)}|`);
   // Prepare the body of table.
   const arrLists = [];
@@ -26,8 +26,9 @@ async function listFolder() {
           console.log(err);
           return;
         }
-        const dirOrFile = stats.isDirectory() ? formattedOuptut(6, 'Folder') : formattedOuptut(6, 'File');
-        resolve({ type: stats.isDirectory() ? 'Folder' : 'File', fileName: file, str: `|${formattedOuptut(maxLength, file)}|${dirOrFile}|` });
+        const dirOrFileText = stats.isDirectory() ? formattedOuptut(6, 'Folder') : formattedOuptut(6, 'File');
+        const dirOrFileColor = stats.isDirectory() ? '\x1b[32m' : '\x1b[33m';
+        resolve({ type: stats.isDirectory() ? 'Folder' : 'File', fileName: file, str: `|${dirOrFileColor}${formattedOuptut(maxLength, file)}\x1b[0m|${dirOrFileColor}${dirOrFileText}\x1b[0m|` });
       });
     });
     arrLists.push(newPromise);

@@ -1,7 +1,6 @@
 # File_manager
-Start work on NodeJs App - File manager
+NodeJs App - File manager
 
-//1.did you colored list output?
 
 // 2.can be rewritten with util.promisify(original)
 // const newPromise = new Promise((resolve) => {
@@ -15,3 +14,7 @@ Start work on NodeJs App - File manager
 
 For checking Brotli compress I used brotli app from site:
 https://manpages.ubuntu.com/manpages/focal/man1/brotli.1.html
+
+//4.For example the create functionality can be re-implemented using writeFile with  wx flag.
+
+'wx': Like 'w' but fails if the path exists.
