@@ -40,8 +40,8 @@ My telegram: https://t.me/eugeneZaiko
 +20 Codebase is written in ESM modules instead of CommonJS
 +20 Codebase is separated (at least 7 modules)
 
-FYI:  
+**FYI**:  
 For checking Brotli compress I used brotli app from site:  
 https://manpages.ubuntu.com/manpages/focal/man1/brotli.1.html  
-compress: brotli <filename>  
-decompress: brotli --decompress <filename>  
+compress: brotli 'filename'   
+decompress: brotli --decompress 'filename'  

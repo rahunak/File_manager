@@ -21,6 +21,12 @@ const readline = readlinePromises.createInterface({
 });
 let username = 'username';
 
+/**
+ * Function to say goodbye to the user and exit the process.
+ *
+ * @param {}
+ * @return {}
+ */
 function sayGoodbye() {
   if (username === 'username') {
     username = 'anonimous';
@@ -29,6 +35,12 @@ function sayGoodbye() {
   process.exit();
 }
 
+/**
+ * Check the command line arguments for a username and display a greeting.
+ *
+ * @param {Array} argsFromCLI - the command line arguments
+ * @return {undefined}
+ */
 function greetingCheck() {
   const argsFromCLI = process.argv.slice(2);
 
@@ -44,6 +56,12 @@ function greetingCheck() {
   }
 }
 
+/**
+ * Asynchronous function to handle different commands based on user input.
+ *
+ * @param {string} inputData - The input data containing the command and arguments.
+ * @return {void} No return value
+ */
 async function commandHandler(inputData) {
   // Prepare command.
   const commandArgs = inputData.trim().split(' ');
@@ -194,6 +212,14 @@ async function commandHandler(inputData) {
   currentPathMessage();
 }
 
+/**
+ * Initializes the application by navigating to the home directory,
+ * setting up event listeners for user input,
+ * and handling any errors that occur during the process.
+ *
+ * @param None
+ * @return None
+ */
 const init = () => {
   // go to home directory
   try {

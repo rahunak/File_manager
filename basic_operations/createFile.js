@@ -9,10 +9,6 @@ import { writeFile } from 'node:fs/promises';
  * or rejects with an error
  */
 async function createFile(fileName) {
-  // const writeStream = fs.createWriteStream(path.join(process.cwd(), fileName), { flags: 'ax' });
-  // writeStream.on('error', () => {
-  //   console.error('Operation failed');
-  // });
   try {
     await writeFile(path.join(process.cwd(), fileName), '', { flag: 'ax' });
   }

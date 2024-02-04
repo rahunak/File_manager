@@ -8,9 +8,9 @@ import { formattedOuptut } from '../helpers.js';
  * @return {Promise<void>} Promise representing the completion of the function
  */
 async function listFolder() {
-  // read current directory
+  // Reads current directory
   const files = await readdir(process.cwd());
-  // find max length of word in folder.
+  // Finds max length of word in folder.
   const maxLength = files.reduce((acc, curr) => {
     if (acc < curr.length) {
       return curr.length;
@@ -47,7 +47,7 @@ async function listFolder() {
     return a.value.fileName.toLowerCase().localeCompare(b.value.fileName.toLowerCase());
   }));
 
-  // pring body of table.
+  // Pring body of table.
   result.forEach((val, index) => {
     console.log(`|${formattedOuptut(7, index + 1)}${val.value.str}`);
   });

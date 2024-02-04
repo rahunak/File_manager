@@ -4,14 +4,32 @@ import { pipeline } from 'node:stream/promises';
 import path from 'path';
 import fs from 'node:fs/promises';
 
+/**
+ * Compresses the file at the specified path using Brotli compression algorithm
+ * and saves it to the destination path.
+ *
+ * @param {string} pathToFile - the path to the file to be compressed
+ * @param {string} pathToDestination - the path to the destination directory
+ * where the compressed file will be saved
+ * @return {Promise<void>} A Promise that resolves when the compression
+ * is complete, or rejects if an error occurs
+ */
 async function compressFunc(pathToFile, pathToDestination) {
   if (pathToFile === undefined || pathToDestination === undefined) {
     console.error('Operation failed - Invalid input');
     return;
   }
+
+  /**
+   * Asynchronously compresses the input and writes
+   * the result to the output using the Brotli algorithm.
+   *
+   * @param {string} input - The input file path to be compressed.
+   * @param {string} output - The output file path where the compressed data will be written.
+   * @return {Promise<void>} A Promise that resolves when the compression is complete.
+   */
   async function brotliCompress(input, output) {
     let expectedInputSize = 0;
-    // try {
     const stats = await fs.stat(pathToFile);
     expectedInputSize = stats.size;
 
