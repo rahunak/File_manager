@@ -1,17 +1,12 @@
-import process from 'node:process';
-import fs from 'fs';
-import path from 'path';
+import { readFile } from 'node:fs/promises';
 
-function readFile(filePath) {
-  console.log('readFile', filePath);
-
-  const readableStream = fs.createReadStream(
-    path.join(process.cwd(), filePath),
-    'utf8',
-  );
-  readableStream.on('error', () => {
+async function readFileFunc(filePath) {
+  try {
+    const contents = await readFile(filePath, { encoding: 'utf8' });
+    console.log(contents);
+  }
+  catch (err) {
     console.error('Operation failed');
-  });
-  readableStream.pipe(process.stdout);
+  }
 }
-export default readFile;
+export default readFileFunc;
