@@ -86,7 +86,15 @@ async function commandHandler(inputData) {
       }
       break;
     case 'add':
-      createFile(args[0]);
+      if (!isArgsOK(inputData, 1)) {
+        console.log('Invalid input');
+        break;
+      }
+      else {
+        console.log('add inputData', inputData, 'split', inputData.trim().split(' ')[1]);
+        await createFile(inputData.trim().split(' ')[1]);
+      }
+      // createFile(args[0]);
       break;
     case 'rn':
       renameFile(args[0], args[1]);
