@@ -94,10 +94,16 @@ async function commandHandler(inputData) {
         console.log('add inputData', inputData, 'split', inputData.trim().split(' ')[1]);
         await createFile(inputData.trim().split(' ')[1]);
       }
-      // createFile(args[0]);
       break;
     case 'rn':
-      renameFile(args[0], args[1]);
+      if (!isArgsOK(inputData, 1)) {
+        console.log('Invalid input');
+        break;
+      }
+      else {
+        await renameFile(inputData.trim().split(' ')[1], inputData.trim().split(' ')[2]);
+      }
+
       break;
     case 'cp':
       copyFile(args[0], args[1]);
