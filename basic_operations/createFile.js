@@ -14,10 +14,10 @@ async function createFile(fileName) {
   //   console.error('Operation failed');
   // });
   try {
-    await writeFile(path.join(process.cwd(), fileName), '', { flags: 'ax' });
+    await writeFile(path.join(process.cwd(), fileName), '', { flag: 'ax' });
   }
   catch (err) {
-    console.error('Operation failed');
+    console.error('Operation failed', err);
   }
 }
 export default createFile;

@@ -1,18 +1,20 @@
 import zlib, { createBrotliCompress } from 'node:zlib';
-import { createReadStream, createWriteStream, stat } from 'node:fs';
+import { createReadStream, createWriteStream } from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 import path from 'path';
+import fs from 'node:fs/promises';
 
 async function compressFunc(pathToFile, pathToDestination) {
   if (pathToFile === undefined || pathToDestination === undefined) {
-    console.error('Operation failed');
+    console.error('Operation failed - Invalid input');
     return;
   }
   async function brotliCompress(input, output) {
     let expectedInputSize = 0;
-    await stat(pathToFile, (err, stats) => {
-      expectedInputSize = stats.size;
-    });
+    // try {
+    const stats = await fs.stat(pathToFile);
+    expectedInputSize = stats.size;
+
     // params uses for optimization
     const brotliStream = await createBrotliCompress({
       chunkSize: 32 * 1024,
@@ -24,7 +26,7 @@ async function compressFunc(pathToFile, pathToDestination) {
     });
 
     const source = await createReadStream(input);
-    const destination = await createWriteStream(output);
+    const destination = await createWriteStream(output, { flags: 'wx' });
     await pipeline(source, brotliStream, destination);
   }
 
@@ -33,8 +35,8 @@ async function compressFunc(pathToFile, pathToDestination) {
     const fileName = path.basename(pathToFile);
     await brotliCompress(pathToFile, path.join(pathToDestination, `${fileName}.br`));
   }
-  catch (error) {
-    console.error('Operation failed');
+  catch (err) {
+    console.error('Operation failed', err);
   }
 }
 export default compressFunc;

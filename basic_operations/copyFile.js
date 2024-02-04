@@ -1,10 +1,19 @@
-import { pipeline } from 'node:stream/promises';
-import { createReadStream, createWriteStream } from 'node:fs';
 import path from 'path';
+import { createReadStream, createWriteStream } from 'node:fs';
+import { pipeline } from 'node:stream/promises';
+import fs from 'node:fs/promises';
 
+/**
+ * Asynchronously copies a file from one location to another.
+ *
+ * @param {string} pathToFile - the path to the file to be copied
+ * @param {string} pathToNewDirectory - the path to the new directory where the file will be copied
+ * @return {Promise} a Promise that resolves when the file is successfully copied,
+ * or rejects if an error occurs
+ */
 async function copyFile(pathToFile, pathToNewDirectory) {
   if (pathToFile === undefined || pathToNewDirectory === undefined) {
-    console.error('Operation failed');
+    console.error('Operation failed - Invalid input');
     return;
   }
   try {
@@ -18,16 +27,23 @@ async function copyFile(pathToFile, pathToNewDirectory) {
         path.extname(pathToFile),
       );
     }
-    else {
+    else if (process.platform === 'linux') {
       pathToCopyFile = path.join(pathToNewDirectory, path.posix.basename(pathToFile));
     }
+    else {
+      pathToCopyFile = path.join(pathToNewDirectory, path.basename(pathToFile));
+    }
+    // check on existing file
+    const stats = await fs.stat(pathToFile);
+    stats.isFile();
     await pipeline(
       createReadStream(pathToFile),
       createWriteStream(pathToCopyFile),
     );
   }
-  catch (error) {
-    console.error('Operation failed');
+  catch (err) {
+    console.error('Operation failed', err);
   }
 }
+
 export default copyFile;

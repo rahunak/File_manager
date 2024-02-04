@@ -47,11 +47,14 @@ function greetingCheck() {
 async function commandHandler(inputData) {
   // Prepare command.
   const commandArgs = inputData.trim().split(' ');
+  const firstArg = inputData.trim().split(' ')[1];
+  const secondArg = inputData.trim().split(' ')[2];
   const [, ...args] = commandArgs;
   const command = commandArgs[0];
 
   switch (command.trim()) {
     case 'up':
+      // up
       if (!isArgsOK(inputData, 0)) {
         console.log('Invalid input');
       }
@@ -60,14 +63,16 @@ async function commandHandler(inputData) {
       }
       break;
     case 'cd':
+      // cd path_to_directory
       if (!isArgsOK(inputData, 1)) {
         console.log('Invalid input');
       }
       else {
-        goDown(inputData.trim().split(' ')[1]);
+        goDown(firstArg);
       }
       break;
     case 'ls':
+      // ls
       if (!isArgsOK(inputData, 0)) {
         console.log('Invalid input');
         break;
@@ -77,61 +82,113 @@ async function commandHandler(inputData) {
       }
       break;
     case 'cat':
+      // cat path_to_file
       if (!isArgsOK(inputData, 1)) {
         console.log('Invalid input');
         break;
       }
       else {
-        await readFile(inputData.trim().split(' ')[1]);
+        await readFile(firstArg);
       }
       break;
     case 'add':
+      // add new_file_name
       if (!isArgsOK(inputData, 1)) {
         console.log('Invalid input');
         break;
       }
       else {
-        console.log('add inputData', inputData, 'split', inputData.trim().split(' ')[1]);
-        await createFile(inputData.trim().split(' ')[1]);
+        await createFile(firstArg);
       }
       break;
     case 'rn':
+      // rn path_to_file new_filename
+      if (!isArgsOK(inputData, 2)) {
+        console.log('Invalid input');
+        break;
+      }
+      else {
+        await renameFile(firstArg, secondArg);
+      }
+      break;
+    case 'cp':
+      // cp path_to_file path_to_new_directory
+      if (!isArgsOK(inputData, 2)) {
+        console.log('Invalid input');
+        break;
+      }
+      else {
+        await copyFile(firstArg, secondArg);
+      }
+      break;
+    case 'mv':
+      // mv path_to_file path_to_new_directory
+      if (!isArgsOK(inputData, 2)) {
+        console.log('Invalid input');
+        break;
+      }
+      else {
+        await moveFile(firstArg, secondArg);
+      }
+      break;
+    case 'rm':
+      // rm path_to_file
       if (!isArgsOK(inputData, 1)) {
         console.log('Invalid input');
         break;
       }
       else {
-        await renameFile(inputData.trim().split(' ')[1], inputData.trim().split(' ')[2]);
+        await removeFile(firstArg);
       }
-
-      break;
-    case 'cp':
-      copyFile(args[0], args[1]);
-      break;
-    case 'mv':
-      moveFile(args[0], args[1]);
-      break;
-    case 'rm':
-      removeFile(args[0]);
       break;
     case 'os':
-      getOSInfo(args[0]);
+      if (!isArgsOK(inputData, 1)) {
+        console.log('Invalid input');
+        break;
+      }
+      else {
+        await getOSInfo(firstArg);
+      }
       break;
     case 'hash':
-      hashFunc(args[0]);
+      // hash path_to_file
+      if (!isArgsOK(inputData, 1)) {
+        console.log('Invalid input');
+        break;
+      }
+      else {
+        await hashFunc(firstArg);
+      }
       break;
     case 'compress':
-      compressFunc(args[0], args[1]);
+      // compress path_to_file path_to_destination
+      if (!isArgsOK(inputData, 2)) {
+        console.log('Invalid input');
+        break;
+      }
+      else {
+        await compressFunc(firstArg, secondArg);
+      }
       break;
     case 'decompress':
-      decompressFunc(args[0], args[1]);
+      // decompress path_to_file path_to_destination
+      if (!isArgsOK(inputData, 2)) {
+        console.log('Invalid input');
+        break;
+      }
+      else {
+        await decompressFunc(firstArg, secondArg);
+      }
       break;
     case '.exit':
       sayGoodbye();
       process.exit();
       break;
+    case '':
+      break;
     default:
       console.log('Invalid input');
+      break;
   }
 
   currentPathMessage();
@@ -143,7 +200,7 @@ const init = () => {
     process.chdir(os.homedir());
   }
   catch (err) {
-    console.error('Operation failed');
+    console.error('Operation failed', err);
   }
   readline.on('SIGINT', () => sayGoodbye());
   greetingCheck();
@@ -156,5 +213,5 @@ try {
   init();
 }
 catch (err) {
-  console.error('Operation failed');
+  console.error('Operation failed', err);
 }

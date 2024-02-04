@@ -9,13 +9,16 @@ import path from 'path';
  * @return {Promise<void>} a Promise that resolves when the file is successfully renamed
  */
 async function renameFile(pathToFile, newFilename) {
-  // fs.rename(oldFile, newFile);
   try {
+    // check on existing file
+    const stats = await fs.stat(pathToFile);
+    stats.isFile();
+
     const extentionFile = path.extname(pathToFile);
 
     await fs.rename(
-      path.join(process.cwd(), pathToFile),
-      path.join(process.cwd(), path.dirname(pathToFile), newFilename + extentionFile),
+      path.join(pathToFile),
+      path.join(newFilename + extentionFile),
     );
   }
   catch (err) {

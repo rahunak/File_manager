@@ -12,7 +12,7 @@ async function readFileFunc(filePath) {
     console.log(contents);
   }
   catch (err) {
-    console.error('Operation failed');
+    console.error('Operation failed', err);
   }
 }
 export default readFileFunc;

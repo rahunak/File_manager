@@ -15,7 +15,7 @@ function goUp() {
     process.chdir(path.resolve(process.cwd(), '..'));
   }
   catch (err) {
-    console.error('Operation failed');
+    console.error('Operation failed', err);
   }
 }
 
@@ -27,10 +27,13 @@ function goUp() {
  */
 function goDown(pathDestination) {
   try {
+    if (pathDestination.trim() === '..') {
+      return;
+    }
     process.chdir(path.resolve(process.cwd(), pathDestination));
   }
   catch (err) {
-    console.error('Operation failed');
+    console.error('Operation failed', err);
   }
 }
 export { goUp, goDown };
