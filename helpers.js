@@ -6,4 +6,13 @@ function formattedOuptut(maxLengthOfWord, word) {
 function currentPathMessage() {
   console.log('You are currently in:', process.cwd());
 }
-export { formattedOuptut, currentPathMessage };
+function isArgsOK(input, expectArgsCount) {
+  console.log('input', input, 'expectArgsCount', expectArgsCount + 1, '=', input.trim().split(' ').length);
+  if (input.trim().split(' ').length === expectArgsCount + 1) {
+    return true;
+  }
+
+  return false;
+}
+
+export { formattedOuptut, currentPathMessage, isArgsOK };

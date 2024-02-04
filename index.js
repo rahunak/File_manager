@@ -2,9 +2,9 @@ import os from 'os';
 import process from 'node:process';
 import readlinePromises from 'node:readline/promises';
 import hashFunc from './hash/hashFunc.js';
-import { currentPathMessage } from './helpers.js';
-import changeDirectory from './nav_and_work/navigation.js';
-import listFolder from './nav_and_work/list.js';
+import { currentPathMessage, isArgsOK } from './helpers.js';
+import { goUp, goDown } from './nav_and_work/navigation.js';
+import listFolder from './nav_and_work/listFolder.js';
 import readFile from './basic_operations/readFile.js';
 import createFile from './basic_operations/createFile.js';
 import renameFile from './basic_operations/renameFile.js';
@@ -29,7 +29,7 @@ function sayGoodbye() {
   process.exit();
 }
 
-function checkInputArgs() {
+function greetingCheck() {
   const argsFromCLI = process.argv.slice(2);
 
   argsFromCLI.forEach((val) => {
@@ -50,28 +50,40 @@ async function commandHandler(inputData) {
   const [, ...args] = commandArgs;
   const command = commandArgs[0];
 
-  // dont forget to remove extra console.log
-  // console.log('\n inputData', inputData);
-  // console.log('\n args', args);
-  // console.log('\n command', command);
-
   switch (command.trim()) {
     case 'up':
-      changeDirectory();
+      if (!isArgsOK(inputData, 0)) {
+        console.log('Invalid input');
+      }
+      else {
+        goUp();
+      }
       break;
     case 'cd':
-      if (args[0] === undefined) {
+      if (!isArgsOK(inputData, 1)) {
+        console.log('Invalid input');
+      }
+      else {
+        goDown(inputData.trim().split(' ')[1]);
+      }
+      break;
+    case 'ls':
+      if (!isArgsOK(inputData, 0)) {
         console.log('Invalid input');
         break;
       }
-      changeDirectory(args[0]);
-      break;
-    case 'ls':
-      await listFolder();
-      currentPathMessage();
+      else {
+        await listFolder();
+      }
       break;
     case 'cat':
-      readFile(args[0]);
+      if (!isArgsOK(inputData, 1)) {
+        console.log('Invalid input');
+        break;
+      }
+      else {
+        await readFile(inputData.trim().split(' ')[1]);
+      }
       break;
     case 'add':
       createFile(args[0]);
@@ -107,6 +119,8 @@ async function commandHandler(inputData) {
     default:
       console.log('Invalid input');
   }
+
+  currentPathMessage();
 }
 
 const init = () => {
@@ -118,12 +132,9 @@ const init = () => {
     console.error('Operation failed');
   }
   readline.on('SIGINT', () => sayGoodbye());
-  checkInputArgs();
+  greetingCheck();
   readline.on('line', (command) => {
-    if (command !== '') {
-      commandHandler(command);
-    }
-    currentPathMessage();
+    commandHandler(command);
   });
 };
 

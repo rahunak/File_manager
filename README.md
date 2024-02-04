@@ -1,16 +1,7 @@
 # File_manager
 NodeJs App - File manager
 
-
-// 2.can be rewritten with util.promisify(original)
-// const newPromise = new Promise((resolve) => {
-
-    //3 need check 
-          pathToCopyFile = path.join(
-        pathToNewDirectory,
-        path.win32.basename(pathToFile),
-        path.extname(pathToFile),
-      );
+For Windows platform copyFile.js and moveFile.js should work correctly, but i'm not sure,cause I have Ubuntu
 
 For checking Brotli compress I used brotli app from site:
 https://manpages.ubuntu.com/manpages/focal/man1/brotli.1.html
