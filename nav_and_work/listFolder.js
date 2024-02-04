@@ -2,6 +2,11 @@ import { readdir } from 'node:fs/promises';
 import { stat } from 'node:fs';
 import { formattedOuptut } from '../helpers.js';
 
+/**
+ * List all files and folders in the current directory in a table format.
+ *
+ * @return {Promise<void>} Promise representing the completion of the function
+ */
 async function listFolder() {
   // read current directory
   const files = await readdir(process.cwd());
@@ -19,7 +24,6 @@ async function listFolder() {
   // Prepare the body of table.
   const arrLists = [];
   files.forEach((file) => {
-    // can be rewritten with util.promisify(original)
     const newPromise = new Promise((resolve) => {
       stat(file, (err, stats) => {
         if (err) {
